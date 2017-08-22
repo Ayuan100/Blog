@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-var debug = require('debug')('my-application'); // debug模块 
+var debug = require('debug')('myapp-app'); // debug模块 
 
 var app = express();
 app.set('port', process.env.PORT || 3000); // 设定监听端口  
@@ -21,9 +21,15 @@ app.set('view engine', 'hbs');
 hbs.registerPartials( path.join(__dirname, '/views/partials') );
 
 //passport control
-var passport = require('./lib/passport');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
 app.use(cookieParser());
-app.use(session(session({secret: 'hello! TMY', resave: true, saveUninitialized: true})));
+app.use(session({
+  secret: 'hello! TMY', 
+  resave: true, 
+  saveUninitialized: true
+}));
+var passport = require('./lib/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
