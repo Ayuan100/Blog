@@ -67,6 +67,39 @@ router.route('/register')
         });
     });
 
+router.get('/active/:activeToken', function (req, res, next) {
+
+    // 找到激活码对应的用户
+    User.findOne({
+        activeToken: req.params.activeToken,
+        
+        // 过期时间 > 当前时间
+        activeExpires: {$gt: Date.now()}
+    }, function (err, user) {
+        if (err) return next(err);
+        
+        // 激活码无效
+        if (!user) {
+            return res.render('message', {
+                title: '激活失败',
+                content: '您的激活链接无效，请重新 <a href="/account/signup">注册</a>'
+            });
+        }
+
+        // 激活并保存
+        user.active = true;
+        user.save(function (err, user) {
+            if (err) return next(err);
+
+            // 返回成功
+            res.render('message', {
+                title: '激活成功',
+                content: user.username + '已成功激活，请前往 <a href="/account/login">登录</a>'
+            })
+        });
+    });
+});
+
 router.route('/login')
     .get(function (req, res) {
         res.render('login');
