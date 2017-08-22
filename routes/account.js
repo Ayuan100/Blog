@@ -2,6 +2,7 @@ var router = require('express').Router();
 var User = require('../models/user');
 var passport = require('../lib/passport');
 var mailer = require('../lib/mailer');
+var debug = require('debug')('my-application'); // debug模块
 
 router.route('/register')
     // 返回注册页面
@@ -12,11 +13,11 @@ router.route('/register')
     .post(function (req, res, next) {
         var username = req.body.username || '',
             password = req.body.password || '';
-
+        //check if is ilegal
         if(username.length === 0 || password.length === 0){
             return res.status(400).end('用户名或密码不合法'); 
         }
-
+        //check if user exists
         User.findOne({username: username}, 
             function(err, user){
                 if(err) {
@@ -26,16 +27,15 @@ router.route('/register')
                 if(user) res.status(201).end('用户已存在');
                 else{
                     //save username and password
-                    console.log("going to save information of new user:", username);
+                    debug("going to save information of new user:" + username);
                     User.create({username: username, password: password},
                         function(err, user) {
                             if (err) {
                                 console.log("error to create user", err);
                                 return next(err);    // 交给接下来的错误处理中间件
                             }
-                            console.log("create user:", username, " successfully");
-                            //res.status(201).end('注册成功');  
-                            
+                        
+                            debug("create user:", username, " successfully");
                             // 生成20位激活码，`crypto`是nodejs内置的包
                             crypto.randomBytes(20, function (err, buf) {
 
