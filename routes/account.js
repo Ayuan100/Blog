@@ -3,6 +3,23 @@ var router = require('express').Router();
 var User = require('../models/user');
 
 
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
+//setup strategy
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+  }
+));
 
 router.route('/register')
     // 返回注册页面
@@ -26,6 +43,7 @@ router.route('/register')
                 }
                 if(user) res.status(201).end('用户已存在');
                 else{
+                    //save username and password
                     console.log("going to save information of new user:", username);
                     User.create({username: username, password: password},
                         function(err, user) {
@@ -39,27 +57,15 @@ router.route('/register')
                         });
                 }
         });
-
-        // 将来会在这里检查用户名是否存在，我们先把它设为true
-        //var usernameExist = true;
-        
-        //if(usernameExist){
-          //  return res.status(400).end('用户名已存在');
-        //}
-        
-        // 将来会在这里执行用户、密码的存储
-        
-        //res.status(201).end('注册成功');
     });
 
 router.route('/login')
     .get(function (req, res) {
         res.render('login');
     })
-    .post(function (req, res, next) {
+    .post(passport.authenticate('local'),function (req, res, next) {
         var username = req.body.username,
             password = req.body.password;
-
         res.end('Login successfully');
     });
 module.exports = router;
