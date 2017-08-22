@@ -1,36 +1,36 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var account = require('./routes/account');
-
-var hbs = require('hbs');
+var debug = require('debug')('my-application'); // debug模块 
 
 var app = express();
-
-var debug = require('debug')('my-application'); // debug模块  
 app.set('port', process.env.PORT || 3000); // 设定监听端口  
+
+var favicon = require('serve-favicon');
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+var logger = require('morgan');
+app.use(logger('dev'));
+var bodyParser = require('body-parser'); //JSON parser to process req data from client
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
+var hbs = require('hbs');
 app.set('view engine', 'hbs');
 hbs.registerPartials( path.join(__dirname, '/views/partials') );
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+//passport control
+var passport = require('./lib/passport');
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(session(session({secret: 'hello! TMY', resave: true, saveUninitialized: true})));
+app.use(passport.initialize());
+app.use(passport.session());
 
+//setup routers
+var index = require('./routes/index');
+var users = require('./routes/users');
+var account = require('./routes/account');
 app.use('/', index);
 app.use('/users', users);
 app.use('/account', account);
