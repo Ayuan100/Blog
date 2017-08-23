@@ -27,13 +27,34 @@ router.route('/register')
             if(user) res.status(201).end('用户已存在');
             else{
                 debug("going to save information of new user:" + username);
-                activate.send(req, res);
+                user = {
+                    username: username,
+                    password: password
+                };
+                User.create( user, function(err, user, next){
+                    if(err) return next(err);
+                    activate.send(user);
+                    res.send('已发送邮件至' + user.username + '，请在24小时内按照邮件提示激活。');
+                }
             }
         });
     });
 
 router.get('/active/:activeToken', function (req, res, next) {
-    activate.check(req, res);
+    activate.check(req.params.activeToken, function(err, user){
+        if(err){
+            return res.render('message', {
+                            title: '激活失败',
+                            content: '您的激活链接无效，请重新 <a href="/account/signup">注册</a>'
+                        });
+        }
+        if(user){
+            res.render('message', {
+                    title: '激活成功',
+                    content: user.username + '已成功激活，请前往 <a href="/account/login">登录</a>'
+                });
+        }
+    });
 });
 
 router.route('/login')
