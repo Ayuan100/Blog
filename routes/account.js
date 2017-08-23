@@ -3,6 +3,7 @@ var User = require('../models/user');
 var passport = require('../lib/passport');
 var activate = require('../lib/activate');
 var debug = require('debug')('myapp-account'); // debug模块
+var authRequired = require('../lib/authRequired');
 
 router.route('/register')
     // 返回注册页面
@@ -61,9 +62,9 @@ router.route('/login')
     .get(function (req, res) {
         res.render('login');
     })
-    .post(passport.authenticate('local'),function (req, res, next) {
-        var username = req.body.username,
-            password = req.body.password;
-        res.end('Login successfully');
+    .post(passport.authenticate('local'), function (req, res, next) {
+        if(req.user && req.user.active){
+            res.end('Login successfully');
+        }
     });
 module.exports = router;
