@@ -27,9 +27,7 @@ router.route('/register')
                   return next(err);
                 }
                 activate.send(user, function(){
-                    user.save(function(err){
                         if(err) return next(err);  
-                        debug("write into db, ", user);
                         res.send('已发送邮件至' + user.username + '，请在24小时内按照邮件提示激活。');
                     });
                 });
