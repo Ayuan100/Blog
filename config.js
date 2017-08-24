@@ -1,8 +1,8 @@
 module.exports = {
-		host: "localhost",
-		mongodb: 'mongodb://localhost/test',
-		env: process.env.NODE_ENV || 'production',
-		schema: 'http://',
+	host: "localhost",
+	mongodb: 'mongodb://localhost/test',
+	env: process.env.NODE_ENV || 'production',
+	schema: 'http://',
     port: 3000,
     mongodb: 'mongodb://localhost/tm-blog',
     smtp: {

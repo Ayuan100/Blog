@@ -1,23 +1,38 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+var debug = require('debug')('myapp-mongoose user');
 
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-    username: {type: String, index: {unique: true}},
+    username: {
+        type: String, 
+        index: {unique: true}
+    },
     password: String,
     avatar: {
         type: String,
-        default: '/images/default-avatar.jpeg'
+        default: '/images/default-avatar.jpg'
     },
     title: {
         type: String,
-        default: '未命名博客'
+        default: 'none'
     },
     description: {
         type: String,
-        default: '博主很懒，还没有添加任何描述……'
+        default: 'empty'
+    },
+    activeToken: String,
+    activeExpires: String,
+    active: {
+        type: Boolean,
+        default: false
     }
 });
+
+var passportLocalMongoose = require('passport-local-mongoose');
+
+UserSchema.plugin(passportLocalMongoose);
+
+
 
 module.exports = mongoose.model('User', UserSchema);

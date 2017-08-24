@@ -24,14 +24,30 @@ hbs.registerPartials( path.join(__dirname, '/views/partials') );
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 app.use(cookieParser());
-app.use(session({
-  secret: 'hello! TMY', 
-  resave: true, 
-  saveUninitialized: true
-}));
-var passport = require('./lib/passport');
+app.use(session());
+// {
+//   secret: 'hello! TMY', 
+//   resave: true, 
+//   saveUninitialized: true
+// }));
+
+var User = require('./models/user');
+var passport = require('passport');
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/test', function(err){
+    if(err){
+        console.log('Could not connect to mongodb on localhost. ');
+    }
+    debug('connect to mongodb://localhost/test');
+});
 
 //setup routers
 var index = require('./routes/index');
@@ -58,6 +74,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 //module.exports = app;
 //启动监听  

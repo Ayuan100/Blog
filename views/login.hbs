@@ -1,0 +1,26 @@
+<html>
+<head>
+  {{>head}}
+</head>
+<body id="login">
+
+<div class="center-wrapper">
+  <div class="center">
+    <h3>TMY BLOG</h3>
+    <form class="form" method="post">
+      <input name="username" type="text" class="form-control" placeholder="邮箱">
+      <input name="password" type="password" class="form-control" placeholder="密码">
+
+      <div class="alert alert-danger" style="display: none;"></div>
+      <div class="alert alert-success" style="display: none;"></div>
+
+      <div class="pull-right">
+        <a class="btn btn-success" onclick = "login()">登录</a>
+        <a class="btn btn-success" href="/account/register">注册</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

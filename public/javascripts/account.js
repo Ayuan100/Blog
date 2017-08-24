@@ -16,6 +16,19 @@ function signup(){
         });
 }
 
+function login(){
+    if(!simpleValidate()) return;
+    $.post('/account/login', $('form').serialize())
+        .done(function(res){
+            alert('done');
+            redirect('/home');
+        })
+        .fail(function(res){
+            alert('fail');
+            warn(res);
+        });
+}
+
 function simpleValidate(){
     var username = $('[name=username]').val().trim();
     var password = $('[name=password]').val();
