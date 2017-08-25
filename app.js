@@ -24,12 +24,11 @@ hbs.registerPartials( path.join(__dirname, '/views/partials') );
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 app.use(cookieParser());
-app.use(session());
-// {
-//   secret: 'hello! TMY', 
-//   resave: true, 
-//   saveUninitialized: true
-// }));
+app.use(session({
+          secret: 'hello! TMY', 
+          resave: true, 
+          saveUninitialized: true
+        }));
 
 var User = require('./models/user');
 var passport = require('passport');

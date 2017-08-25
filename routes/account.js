@@ -1,6 +1,6 @@
 var router = require('express').Router();
 var User = require('../models/user');
-var passport = require('../lib/passport');
+var passport = require('passport');
 var activate = require('../lib/activate');
 var debug = require('debug')('myapp-account'); // debug模块
 var authRequired = require('../lib/authRequired');
@@ -29,7 +29,6 @@ router.route('/register')
                 activate.send(user, function(){
                         if(err) return next(err);  
                         res.send('已发送邮件至' + user.username + '，请在24小时内按照邮件提示激活。');
-                    });
                 });
             });
         // //check if user exists
@@ -82,7 +81,12 @@ router.get('/active/:activeToken', function (req, res, next) {
 
 router.route('/login')
     .get(function (req, res) {
-        res.render('login');
+        debug("login-- what's going on");
+        res.render('login', {   
+                title:  'login',
+                avatar_url:    '/images/default_avatar.jpg',
+                logged: false
+            });
     })
     .post(
         function(){debug("what's going on")},
